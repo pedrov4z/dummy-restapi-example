@@ -1,16 +1,16 @@
-import { CssBaseline, ThemeProvider } from '@material-ui/core';
+import { CssBaseline } from '@material-ui/core';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
-import { muiTheme } from './components/MuiTheme/MuiTheme';
+import MuiThemeProvider from './components/MuiThemeProvider/MuiThemeProvider';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
   <React.StrictMode>
-    <ThemeProvider theme={muiTheme}>
+    <MuiThemeProvider>
       <App />
-    </ThemeProvider>
+    </MuiThemeProvider>
     <CssBaseline />
   </React.StrictMode>,
   document.getElementById('root')
