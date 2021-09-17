@@ -50,7 +50,7 @@ const EmployeesProvider: React.FC = ({ children }) => {
             }
         })
         .catch(error => {
-            setErrorMessage(error.response.data.message)
+            setErrorMessage(error.response?.data?.message ?? 'Unknown error');
         })
         .finally(() => {
             setIsLoading(false);
@@ -62,15 +62,29 @@ const EmployeesProvider: React.FC = ({ children }) => {
     }
 
     const addEmployee = (params: PostRequestParams) => {
-        api.post('/create', params.employee).then().catch();
+        const { employee } = params;
+        const payload = {
+            name: employee.name,
+            age: employee.age.toString(),
+            salary: employee.salary.toString(),
+        }
+        api.post('/create', payload).then((response) => {
+            console.log(response);
+        }).catch();
     }
     
     const changeEmployee = (params: UpdateRequestParams) => {
-        api.put(`/update/${params.employee.id}`, params.employee).then().catch()
+        const payload = params.employee;
+        api.put(`/update/${payload.id}`, payload).then().catch()
     }
     
     const removeEmployee = (params: DeleteRequestParams) => {
-        api.delete(`/delete/${params.id}`).then().catch()
+        const { id } = params;
+        api.delete(`/delete/${id}`)
+            .then(() => {
+                setEmployees(employees.filter(e => e.id !== id))
+            })
+            .catch()
     }
 
     return (
