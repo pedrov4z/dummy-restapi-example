@@ -10,8 +10,8 @@ ReactDOM.render(
   <React.StrictMode>
     <MuiThemeProvider>
       <App />
+      <CssBaseline />
     </MuiThemeProvider>
-    <CssBaseline />
   </React.StrictMode>,
   document.getElementById('root')
 );
