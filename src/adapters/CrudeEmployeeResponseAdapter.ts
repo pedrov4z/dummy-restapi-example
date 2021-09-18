@@ -1,7 +1,7 @@
-import { CrudeEmployee, Employee } from "../types/Employee";
+import { CrudeEmployee, Employee } from "@/types";
 
 export class CrudeEmployeeResponseAdapter {
-    private crudeEmployee: CrudeEmployee
+    private readonly crudeEmployee: CrudeEmployee
 
     constructor(crudeEmployee: CrudeEmployee) {
         this.crudeEmployee = crudeEmployee

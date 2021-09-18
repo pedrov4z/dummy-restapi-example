@@ -14,9 +14,9 @@ api.interceptors.response.use(
     showToast(response.statusText, 'success');
     return response
   },
-  (error) => {
+  async (error) => {
     showToast(error.response?.data?.message ?? 'Unknown error', 'error');
-    return Promise.reject(error);
+    return await Promise.reject(error);
   }
 );
 

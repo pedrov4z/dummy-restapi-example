@@ -1,4 +1,4 @@
-import { Employee } from "./Employee";
+import { Employee } from "@/types";
 
 export interface GetOneRequestParams {
     id: number,

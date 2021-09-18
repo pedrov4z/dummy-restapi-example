@@ -1,4 +1,4 @@
-import { CrudeEmployee, Employee } from "./Employee";
+import { CrudeEmployee, Employee } from "@/types";
 
 interface BaseResponse {
     status: string,
