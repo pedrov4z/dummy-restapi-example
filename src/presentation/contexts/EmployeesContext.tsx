@@ -17,9 +17,7 @@ type EmployeesContextData = {
 const EmployeesContext = createContext<EmployeesContextData>({
     isLoading: true,
     employees: [],
-    fetchEmployees: () => {
-        console.log('Provider not ready !')
-    },
+    fetchEmployees: () => {},
     fetchEmployee: () => {},
     addEmployee: () => {},
     changeEmployee: () => {},
@@ -32,7 +30,6 @@ const EmployeesProvider: React.FC = ({ children }) => {
     const [isLoading, setIsLoading] = useState(true);
 
     const fetchEmployees = (): void => {
-        console.log('Fetching all employees . . .');
         if (!isLoading) {
             setIsLoading(true)
         }
@@ -67,9 +64,7 @@ const EmployeesProvider: React.FC = ({ children }) => {
             age: employee.age.toString(),
             salary: employee.salary.toString(),
         }
-        api.post('/create', payload).then((response) => {
-            console.log(response);
-        }).catch(() => {});
+        api.post('/create', payload).then(() => {}).catch(() => {});
     }
     
     const changeEmployee = (params: UpdateRequestParams): void => {
