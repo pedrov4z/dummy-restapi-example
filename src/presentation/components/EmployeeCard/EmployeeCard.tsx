@@ -44,7 +44,6 @@ const EmployeeCard: React.FC<EmployeeCardProps> = ({ employee, onEditClick, onRe
     return (
         <Grid item xs={12} sm={6} md={4} lg={3}>
             <Card variant="outlined" className={classes.root} onClick={onEditClick}>
-                {/* <Typography>{employee.profile_image}</Typography> */}
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                     <Typography style={{ fontWeight: 'bold' }}>{employee.name}</Typography>
 
