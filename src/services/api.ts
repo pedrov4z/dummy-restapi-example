@@ -2,7 +2,7 @@ import axios from 'axios';
 import { toast, TypeOptions } from 'react-toastify';
 
 const api = axios.create({
-  baseURL: 'http://dummy.restapiexample.com/api/v1/'
+  baseURL: process.env.API_BASE_URL
 });
 
 const showToast = (message: string, type?: TypeOptions): void => {
