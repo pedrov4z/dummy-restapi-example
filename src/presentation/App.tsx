@@ -4,7 +4,6 @@ import Router from '@/presentation/router/Router';
 import { CssBaseline } from '@material-ui/core';
 import { ConfirmProvider } from 'material-ui-confirm';
 import React from 'react';
-import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const App: React.FC = () => {
@@ -13,7 +12,6 @@ const App: React.FC = () => {
       <ConfirmProvider>
         <EmployeesProvider>
           <Router />
-          <ToastContainer />
         </EmployeesProvider>
       </ConfirmProvider>
       <CssBaseline />
