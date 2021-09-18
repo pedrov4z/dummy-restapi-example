@@ -2,7 +2,7 @@
 import { EmployeeCard, EmployeeDialog } from '@/presentation/components';
 import { useEmployeesContext } from '@/presentation/contexts';
 import { Employee } from '@/types';
-import { Box, Button, Card, CardHeader, CircularProgress, Grid, makeStyles, Typography } from '@material-ui/core';
+import { Box, Button, Card, CircularProgress, Grid, makeStyles, Typography } from '@material-ui/core';
 import { Add } from '@material-ui/icons';
 import { useConfirm } from 'material-ui-confirm';
 import React, { useEffect, useState } from 'react';
@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
 const Home: React.FC = () => {
     const classes = useStyles();
     const confirm = useConfirm();
-    const { employees, errorMessage, isLoading, fetchEmployees, changeEmployee, removeEmployee  } = useEmployeesContext();
+    const { employees, errorMessage, isLoading, fetchEmployees, removeEmployee  } = useEmployeesContext();
 
     const [employeeDialogOpen, setEmployeeDialogOpen] = useState(false);
     const [selectedEmployee, selectEmployee] = useState<Employee | undefined>(undefined);
@@ -27,7 +27,7 @@ const Home: React.FC = () => {
         setEmployeeDialogOpen(true);
     }
 
-    const handleChangeEmployeeCmd = (employee: Employee): void => {
+    const handleSelectEmployeeCmd = (employee: Employee): void => {
         selectEmployee(employee);
     }
 
@@ -53,9 +53,10 @@ const Home: React.FC = () => {
     return (
         <Box className={classes.root}>
             <Card className={classes.card}>
-                <CardHeader title="Employees" />
-
-                <Box display="flex" justifyContent="flex-end" alignItems="center">
+                <Box display="flex" justifyContent="space-between" alignItems="center">
+                    <Typography variant="h5">
+                        Employees
+                    </Typography>
                     <Button disabled={isLoading} onClick={handleNewEmployeeCmd} startIcon={<Add />}>New</Button>
                 </Box>
 
@@ -75,7 +76,7 @@ const Home: React.FC = () => {
                         ) : (
                             <Grid container>
                                 {employees.map(employee => (
-                                    <EmployeeCard key={employee.id} employee={employee} onEditClick={() => handleChangeEmployeeCmd(employee)} onRemoveClick={() => handleRemoveEmployeeCmd(employee)} />
+                                    <EmployeeCard key={employee.id} employee={employee} onEditClick={() => handleSelectEmployeeCmd(employee)} onRemoveClick={() => handleRemoveEmployeeCmd(employee)} />
                                 ))}
                             </Grid>            
                         )}
