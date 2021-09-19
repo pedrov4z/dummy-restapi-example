@@ -1,5 +1,5 @@
 import { ThemeContext } from '@/presentation/components/MuiThemeProvider';
-import { AppBar, Box, IconButton, makeStyles, Toolbar, Typography, useTheme } from '@material-ui/core';
+import { AppBar, Box, IconButton, makeStyles, Toolbar, Tooltip, Typography, useTheme } from '@material-ui/core';
 import { Brightness4 as BrightnessIcon } from '@material-ui/icons';
 import React, { useContext } from 'react';
 
@@ -32,9 +32,11 @@ const AppScaffold: React.FC<AppScaffoldProps> = ({ children }) => {
                     </Box>
                     
                     <Box>
-                        <IconButton onClick={toggleDarkMode}>
-                            <BrightnessIcon />
-                        </IconButton>
+                        <Tooltip title="Toggle light/dark mode">
+                            <IconButton onClick={toggleDarkMode}>
+                                <BrightnessIcon />
+                            </IconButton>
+                        </Tooltip>
                     </Box>
                 </Box>
             </AppBar>
