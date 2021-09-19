@@ -8,10 +8,6 @@ export interface GetResponse extends BaseResponse {
     data: CrudeEmployee[],
 }
 
-export interface GetOneResponse extends BaseResponse {
-    data: CrudeEmployee,
-}
-
 export interface PostResponse extends BaseResponse {
     data: Employee,
 }
