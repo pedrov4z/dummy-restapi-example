@@ -11,7 +11,7 @@ import {
     TextField,
     Typography
 } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 const useStyles = makeStyles((theme) => ({
     root: {},
@@ -52,14 +52,8 @@ const EmployeeDialog: React.FC<EmployeeDialogProps> = ({
         age: 0,
         salary: 0
     });
-    const [errorState, setErrorState] = useState<Partial<Employee>>({
-        name: '',
-        age: 0,
-        salary: 0
-    });
 
     const handleBlur = (e: React.FocusEvent<HTMLInputElement>): void => {
-        console.log({ name: e.target.name, value: e.target.value });
         if (typeof formState[e.target.name as keyof Employee] === 'number') {
             setFormState({...formState, [e.target.name]: Number(e.target.value)});
         } else {
@@ -77,17 +71,16 @@ const EmployeeDialog: React.FC<EmployeeDialogProps> = ({
                     age,
                     salary
                 }
+            }).then(() => {
+                onClose();            
             });
+
         } else {
-            changeEmployee({
-                employee: formState as Employee,
-            })
+            changeEmployee({ employee: formState as Employee }).then(() => {
+                onClose();
+            });
         }
     };
-    
-    useEffect(() => {
-        console.log({ formState });
-    }, [formState])
 
     return (
         <Dialog open PaperProps={{ className: classes.paper }}>
@@ -100,7 +93,6 @@ const EmployeeDialog: React.FC<EmployeeDialogProps> = ({
             
             <DialogContent>
                 <Box className={classes.fieldsBox} display="flex" flexDirection="column">
-                    {/* <TextField variant="outlined" label="Profile picture" name="profile_picture" value={formState.profile_pic}></TextField> */}
                     <TextField variant="outlined" label="Name" name="name" onBlur={handleBlur} defaultValue={formState.name}></TextField>
                     <TextField variant="outlined" label="Age" name="age" onBlur={handleBlur} defaultValue={(formState.age ?? 0) > 0 ? formState.age : ''}></TextField>
                     <TextField variant="outlined" label="Salary" name="salary" onBlur={handleBlur} defaultValue={(formState.salary ?? 0) > 0 ? formState.salary : ''}></TextField>

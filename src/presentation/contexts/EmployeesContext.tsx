@@ -1,27 +1,26 @@
 import { CrudeEmployeeResponseAdapter } from "@/adapters";
 import { api } from "@/services";
-import { CrudeEmployee, DeleteRequestParams, Employee, GetOneRequestParams, PostRequestParams, UpdateRequestParams } from "@/types";
+import { DeleteRequestParams, DeleteResponse, Employee, GetResponse, PostRequestParams, PostResponse, UpdateRequestParams } from "@/types";
+import { AxiosResponse } from "axios";
 import React, { createContext, useContext, useState } from "react";
 
 type EmployeesContextData = {
     isLoading: boolean,
     errorMessage?: string,
     employees: Employee[],
-    fetchEmployees: () => void,
-    fetchEmployee: (params: GetOneRequestParams) => void,
-    addEmployee: (params: PostRequestParams) => void,
-    changeEmployee: (params: UpdateRequestParams) => void,
-    removeEmployee: (params: DeleteRequestParams) => void,
+    fetchEmployees: () => Promise<AxiosResponse<GetResponse>>,
+    addEmployee: (params: PostRequestParams) => Promise<AxiosResponse<PostResponse>>,
+    changeEmployee: (params: UpdateRequestParams) => Promise<AxiosResponse>,
+    removeEmployee: (params: DeleteRequestParams) => Promise<AxiosResponse<DeleteResponse>>,
 }
 
 const EmployeesContext = createContext<EmployeesContextData>({
     isLoading: true,
     employees: [],
-    fetchEmployees: () => {},
-    fetchEmployee: () => {},
-    addEmployee: () => {},
-    changeEmployee: () => {},
-    removeEmployee: () => {},
+    fetchEmployees: async () => await new Promise(() => {}),
+    addEmployee: async () => await new Promise(() => {}),
+    changeEmployee: async () => await new Promise(() => {}),
+    removeEmployee: async () => await new Promise(() => {}),
 })
 
 const EmployeesProvider: React.FC = ({ children }) => {
@@ -29,56 +28,74 @@ const EmployeesProvider: React.FC = ({ children }) => {
     const [errorMessage, setErrorMessage] = useState<Partial<string>>();
     const [isLoading, setIsLoading] = useState(true);
 
-    const fetchEmployees = (): void => {
-        if (!isLoading) {
-            setIsLoading(true)
-        }
-        
-        api.get('/employees').then(res => {
-            if (res.data.status === 'success') {
-                const arr: Employee[] = [];
-
-                for (const crudeEmployee of (res.data.data as CrudeEmployee[])) {
-                    arr.push(new CrudeEmployeeResponseAdapter(crudeEmployee).convert())
-                }
-
-                setEmployees(arr);
+    const fetchEmployees = async (): Promise<AxiosResponse<GetResponse>> => {
+        return await new Promise<AxiosResponse<GetResponse>>((resolve, reject) => {
+            if (!isLoading) {
+                setIsLoading(true)
             }
-        })
-        .catch(error => {
-            setErrorMessage(error.response?.data?.message ?? 'Unknown error');
-        })
-        .finally(() => {
-            setIsLoading(false);
-        });
-    }
+            
+            api.get<GetResponse>('/employees').then(res => {
+                if (res.data.status === 'success') {
+                    const arr: Employee[] = [];
+                    for (const crudeEmployee of (res.data.data)) {
+                        arr.push(new CrudeEmployeeResponseAdapter(crudeEmployee).convert())
+                    }
 
-    const fetchEmployee = (params: GetOneRequestParams): void => {
-        api.get(`/employee/${params.id}`).then(() => {}).catch(() => {});
-    }
-
-    const addEmployee = (params: PostRequestParams): void => {
-        const { employee } = params;
-        const payload = {
-            name: employee.name,
-            age: employee.age.toString(),
-            salary: employee.salary.toString(),
-        }
-        api.post('/create', payload).then(() => {}).catch(() => {});
-    }
-    
-    const changeEmployee = (params: UpdateRequestParams): void => {
-        const payload = params.employee;
-        api.put(`/update/${payload.id}`, payload).then(() => {}).catch(() => {})
-    }
-    
-    const removeEmployee = (params: DeleteRequestParams): void => {
-        const { id } = params;
-        api.delete(`/delete/${id}`)
-            .then(() => {
-                setEmployees(employees.filter(e => e.id !== id))
+                    setEmployees(arr);
+                }
+                resolve(res);
             })
-            .catch(() => {})
+            .catch(async (error) => {
+                setErrorMessage(error.response?.data?.message ?? 'Unknown error');
+                reject(error);
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
+        })
+    }
+
+    const addEmployee = async (params: PostRequestParams): Promise<AxiosResponse<PostResponse>> => {
+        return await new Promise<AxiosResponse<PostResponse>>((resolve, reject) => {
+            const { employee } = params;
+
+            const payload = {
+                name: employee.name,
+                age: employee.age.toString(),
+                salary: employee.salary.toString(),
+            }
+
+            api.post<PostResponse>('/create', payload).then((res) => {
+                resolve(res);
+            }).catch((error) => {
+                reject(error)
+            });
+        })
+    }
+
+    const changeEmployee = async (params: UpdateRequestParams): Promise<AxiosResponse> => {
+        return await new Promise<AxiosResponse>((resolve, reject) => {
+            const payload = params.employee;
+
+            api.put(`/update/${payload.id}`, payload).then((res) => {
+                resolve(res);
+            }).catch((error) => {
+                reject(error);
+            });
+        })
+    }
+    
+    const removeEmployee = async (params: DeleteRequestParams): Promise<AxiosResponse<DeleteResponse>> => {
+        return await new Promise<AxiosResponse<DeleteResponse>>((resolve, reject) => {
+            const { id } = params;
+
+            api.delete<DeleteResponse>(`/delete/${id}`).then((res) => {
+                setEmployees(employees.filter(e => e.id !== id));
+                resolve(res);
+            }).catch((error) => {
+                reject(error);
+            })
+        })
     }
 
     return (
@@ -87,7 +104,6 @@ const EmployeesProvider: React.FC = ({ children }) => {
             isLoading,
             errorMessage,
             fetchEmployees,
-            fetchEmployee,
             addEmployee,
             changeEmployee,
             removeEmployee
@@ -104,7 +120,6 @@ export function useEmployeesContext(): EmployeesContextData {
         isLoading,
         errorMessage,
         fetchEmployees,
-        fetchEmployee,
         addEmployee,
         changeEmployee,
         removeEmployee
@@ -114,7 +129,6 @@ export function useEmployeesContext(): EmployeesContextData {
         isLoading,
         errorMessage,
         fetchEmployees,
-        fetchEmployee,
         addEmployee,
         changeEmployee,
         removeEmployee

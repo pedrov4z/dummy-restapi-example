@@ -39,11 +39,9 @@ const Home: React.FC = () => {
     }
 
     const handleRemoveEmployeeCmd = (employee: Employee): void => {
-        confirm({ description: 'This action is permanent!' })
-            .then(() => {
-                removeEmployee({ id: employee.id });
-            })
-            .catch(() => { });
+        confirm({ description: 'This action is permanent!' }).then(() => {
+            removeEmployee({ id: employee.id });
+        });
     }
 
     useEffect(() => {
