@@ -162,6 +162,11 @@ const EmployeeDialog: React.FC<EmployeeDialogProps> = ({
                         variant="outlined"
                         label="Name"
                         name="name"
+                        onChange={e => {
+                            const value = e.target.value.replace(/[0-9]+/g, '');
+
+                            e.target.value = value;
+                        }}
                         onBlur={handleBlur}
                         defaultValue={formState.name}
                         error={formState.nameTouched && Boolean(formState.nameError)}
