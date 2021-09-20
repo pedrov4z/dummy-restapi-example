@@ -1,3 +1,4 @@
+import { toCurrencyValue } from '@/helpers/numberFormat';
 import { Employee } from '@/types';
 import { Box, Card, Grid, makeStyles, Tooltip, Typography } from '@material-ui/core';
 import { blue } from '@material-ui/core/colors';
@@ -59,7 +60,7 @@ const EmployeeCard: React.FC<EmployeeCardProps> = ({ employee, onEditClick, onRe
                     </Tooltip>
                 </Box>
                 <Typography>{`${employee.age}yo`}</Typography>
-                <Typography>{`${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'USD' }).format(employee.salary)}/yr`}</Typography>
+                <Typography>{`${toCurrencyValue(employee.salary)}/yr`}</Typography>
             </Card>
         </Grid>
     );
