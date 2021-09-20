@@ -12,6 +12,8 @@ type EmployeesContextData = {
     addEmployee: (params: PostRequestParams) => Promise<AxiosResponse<PostResponse>>,
     changeEmployee: (params: UpdateRequestParams) => Promise<AxiosResponse>,
     removeEmployee: (params: DeleteRequestParams) => Promise<AxiosResponse<DeleteResponse>>,
+    sortBy: (field: "name" | "age" | "salary") => void,
+    filters: Array<"nameAsc" | "nameDesc" | "ageAsc" | "ageDesc" | "salaryAsc" | "salaryDesc">
 }
 
 const EmployeesContext = createContext<EmployeesContextData>({
@@ -20,12 +22,15 @@ const EmployeesContext = createContext<EmployeesContextData>({
     fetchEmployees: async () => await new Promise(() => {}),
     addEmployee: async () => await new Promise(() => {}),
     changeEmployee: async () => await new Promise(() => {}),
-    removeEmployee: async () => await new Promise(() => {}),
+    removeEmployee: async () => await new Promise(() => { }),
+    sortBy: () => { },
+    filters: [],
 })
 
 const EmployeesProvider: React.FC = ({ children }) => {
     const [employees, setEmployees] = useState<Employee[]>([])
     const [errorMessage, setErrorMessage] = useState<Partial<string>>();
+    const [filters, setFilters] = useState<EmployeesContextData['filters']>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     const fetchEmployees = async (): Promise<AxiosResponse<GetResponse>> => {
@@ -50,6 +55,7 @@ const EmployeesProvider: React.FC = ({ children }) => {
                 reject(error);
             })
             .finally(() => {
+                resetFilters();
                 setIsLoading(false);
             });
         })
@@ -66,6 +72,7 @@ const EmployeesProvider: React.FC = ({ children }) => {
             }
 
             api.post<PostResponse>('/create', payload).then((res) => {
+                fetchEmployees();
                 resolve(res);
             }).catch((error) => {
                 reject(error)
@@ -78,6 +85,7 @@ const EmployeesProvider: React.FC = ({ children }) => {
             const payload = params.employee;
 
             api.put(`/update/${payload.id}`, payload).then((res) => {
+                fetchEmployees();
                 resolve(res);
             }).catch((error) => {
                 reject(error);
@@ -98,6 +106,33 @@ const EmployeesProvider: React.FC = ({ children }) => {
         })
     }
 
+    const resetFilters = (): void => {
+        if (filters.length > 0) {
+            setFilters([]);
+        }
+    }
+
+    const sortBy = (field: "name" | "age" | "salary"): void => {
+        let invert = false;
+        if (filters.includes(`${field}Asc`)) {
+            invert = true;
+        }
+
+        resetFilters();
+
+        setEmployees(employees.sort((a, b) => {
+            if (a[field] > b[field]) {
+                return invert ? -1 : 1;
+            } else if (a[field] < b[field]) {
+                return invert ? 1 : -1;
+            }
+
+            return 0;
+        }));
+
+        setFilters([invert ? `${field}Desc` : `${field}Asc`]);
+    }
+
     return (
         <EmployeesContext.Provider value={{
             employees,
@@ -106,7 +141,9 @@ const EmployeesProvider: React.FC = ({ children }) => {
             fetchEmployees,
             addEmployee,
             changeEmployee,
-            removeEmployee
+            removeEmployee,
+            sortBy,
+            filters
         }}>
             { children }
         </EmployeesContext.Provider>
@@ -122,7 +159,9 @@ export function useEmployeesContext(): EmployeesContextData {
         fetchEmployees,
         addEmployee,
         changeEmployee,
-        removeEmployee
+        removeEmployee,
+        sortBy,
+        filters
     } = context;
     return {
         employees,
@@ -131,7 +170,9 @@ export function useEmployeesContext(): EmployeesContextData {
         fetchEmployees,
         addEmployee,
         changeEmployee,
-        removeEmployee
+        removeEmployee,
+        sortBy,
+        filters
     }
 }
 
