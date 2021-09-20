@@ -1,5 +1,5 @@
 
-import { EmployeeCard, EmployeeDialog } from '@/presentation/components';
+import { EmployeeCard, EmployeeDialog, SortBar } from '@/presentation/components';
 import { useEmployeesContext } from '@/presentation/contexts';
 import { Employee } from '@/types';
 import { Box, Button, Card, CircularProgress, Grid, makeStyles, Typography } from '@material-ui/core';
@@ -51,30 +51,74 @@ const Home: React.FC = () => {
     return (
         <Box className={classes.root}>
             <Card className={classes.card}>
-                <Box display="flex" justifyContent="space-between" alignItems="center">
+                <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
+                >
                     <Typography variant="h5">
                         Employees
                     </Typography>
-                    <Button disabled={isLoading} onClick={handleNewEmployeeCmd} startIcon={<Add />}>New</Button>
+
+                    <Button
+                        disabled={isLoading}
+                        onClick={handleNewEmployeeCmd}
+                        startIcon={<Add />}
+                    >
+                        New
+                    </Button>
                 </Box>
 
-                {(employeeDialogOpen || selectedEmployee !== undefined) && <EmployeeDialog onClose={handleCloseDialogCmd} employee={selectedEmployee} />}
+                {(employeeDialogOpen || selectedEmployee !== undefined) && (
+                    <EmployeeDialog
+                        onClose={handleCloseDialogCmd}
+                        employee={selectedEmployee}
+                    />
+                )}
 
                 {isLoading ? (
-                    <Box display="flex" justifyContent="center" alignItems="center">
+                    <Box
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                        m={1}
+                    >
                         <CircularProgress />
                     </Box>
                 ) : (
                     <>
                         {errorMessage ? (
-                            <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center">
+                            <Box
+                                display="flex"
+                                flexDirection="column"
+                                justifyContent="center"
+                                alignItems="center"
+                                m={1}    
+                            >
                                 <Typography color="error">{errorMessage}</Typography>
-                                <Button color="primary" onClick={() => document.location.reload()} variant="contained">Try again</Button>    
+                                    <Button
+                                        color="primary"
+                                        onClick={() => document.location.reload()}
+                                        variant="contained"
+                                    >
+                                        Try again
+                                    </Button>
                             </Box>
                         ) : (
                             <Grid container>
+                                <Grid item xs={12}>
+                                    <Box marginY={1}>
+                                        <SortBar />
+                                    </Box>
+                                </Grid>
+                                        
                                 {employees.map(employee => (
-                                    <EmployeeCard key={employee.id} employee={employee} onEditClick={() => handleSelectEmployeeCmd(employee)} onRemoveClick={() => handleRemoveEmployeeCmd(employee)} />
+                                    <EmployeeCard
+                                        key={employee.id}
+                                        employee={employee}
+                                        onEditClick={() => handleSelectEmployeeCmd(employee)}
+                                        onRemoveClick={() => handleRemoveEmployeeCmd(employee)}
+                                    />
                                 ))}
                             </Grid>            
                         )}
