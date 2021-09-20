@@ -13,6 +13,7 @@ type EmployeesContextData = {
     changeEmployee: (params: UpdateRequestParams) => Promise<AxiosResponse>,
     removeEmployee: (params: DeleteRequestParams) => Promise<AxiosResponse<DeleteResponse>>,
     sortBy: (field: "name" | "age" | "salary") => void,
+    resetFilters: (refresh: boolean) => void,
     filters: Array<"nameAsc" | "nameDesc" | "ageAsc" | "ageDesc" | "salaryAsc" | "salaryDesc">
 }
 
@@ -24,7 +25,8 @@ const EmployeesContext = createContext<EmployeesContextData>({
     changeEmployee: async () => await new Promise(() => {}),
     removeEmployee: async () => await new Promise(() => { }),
     sortBy: () => { },
-    filters: [],
+    resetFilters: () => {},
+    filters: []
 })
 
 const EmployeesProvider: React.FC = ({ children }) => {
@@ -106,8 +108,10 @@ const EmployeesProvider: React.FC = ({ children }) => {
         })
     }
 
-    const resetFilters = (): void => {
-        if (filters.length > 0) {
+    const resetFilters = (refresh: boolean = false): void => {
+        if (refresh) {
+            fetchEmployees();
+        } else if (filters.length > 0) {
             setFilters([]);
         }
     }
@@ -143,6 +147,7 @@ const EmployeesProvider: React.FC = ({ children }) => {
             changeEmployee,
             removeEmployee,
             sortBy,
+            resetFilters,
             filters
         }}>
             { children }
@@ -161,6 +166,7 @@ export function useEmployeesContext(): EmployeesContextData {
         changeEmployee,
         removeEmployee,
         sortBy,
+        resetFilters,
         filters
     } = context;
     return {
@@ -172,6 +178,7 @@ export function useEmployeesContext(): EmployeesContextData {
         changeEmployee,
         removeEmployee,
         sortBy,
+        resetFilters,
         filters
     }
 }

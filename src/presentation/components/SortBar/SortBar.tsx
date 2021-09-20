@@ -1,5 +1,5 @@
 import { useEmployeesContext } from '@/presentation/contexts';
-import { Box, Card, Chip, ChipTypeMap, makeStyles, Typography } from '@material-ui/core';
+import { Box, Button, Card, Chip, ChipTypeMap, makeStyles, Typography } from '@material-ui/core';
 import { ArrowUpward } from '@material-ui/icons';
 import React from 'react';
 
@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
 
 const SortBar: React.FC = () => {
     const classes = useStyles();
-    const { filters, sortBy } = useEmployeesContext();
+    const { filters, resetFilters, sortBy } = useEmployeesContext();
 
     const isSelected = (field: string): boolean => {
         if (filters.find(x => x.includes(field))) {
@@ -92,6 +92,12 @@ const SortBar: React.FC = () => {
                     label="Salary"
                     onClick={() => sortBy('salary')}
                 />
+
+                {filters.length > 0 && (
+                    <Button onClick={() => resetFilters(true)}>
+                        Clear
+                    </Button>
+                )}
             </Box>
         </Card>
     );
